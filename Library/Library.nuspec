@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>InvertedTomato.Buffers</id>
+    <title>InvertedTomato.Buffers</title>
+    <version>$version$</version>
+    <authors>InvertedTomato</authors>
+    <owners>InvertedTomato</owners>
+    <licenseUrl>https://github.com/invertedtomato/buffers/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/invertedtomato/buffers</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>Set of tools for manipulating bits and byte-arrays fast and efficently.</summary>
+    <description>A set of tools we use in-house to make manipulating bits and byte-arrays fast and efficently. There's nothing earth shattering, but it saves us pages of monkey-work pushing bytes around in other places./description>
+    <releaseNotes></releaseNotes>
+    <tags></tags>
+  </metadata>
+</package>
