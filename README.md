@@ -1,0 +1,2 @@
+# InvertedTomato.Buffers
+A set of tools we use in-house to make manipulating bits and byte-arrays fast and efficent. There's nothing earth shattering, but it saves us pages of monkey-work pushing bytes around in other places.
