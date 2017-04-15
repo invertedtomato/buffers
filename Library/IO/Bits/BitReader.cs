@@ -5,6 +5,7 @@ namespace InvertedTomato.IO.Bits {
     /// <summary>
     /// Read bits or groups of bits from stream.
     /// </summary>
+    [Obsolete]
     public class BitReader : IDisposable {
         /// <summary>
         /// If the reader is disposed.

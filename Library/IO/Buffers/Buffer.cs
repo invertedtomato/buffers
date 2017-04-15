@@ -3,6 +3,11 @@
 namespace InvertedTomato.IO.Buffers {
     public class Buffer<T> : ReadOnlyBuffer<T> {
         /// <summary>
+        /// An index within the current value that is currently in use (ignorable).
+        /// </summary>
+        public int SubOffset { get; protected set; }
+
+        /// <summary>
         /// Create a new buffer initialized to the given length.
         /// </summary>
         /// <param name="maxCapacity"></param>
@@ -111,6 +116,7 @@ namespace InvertedTomato.IO.Buffers {
             }
 #endif
 
+            SubOffset = 0;
             return Underlying[Start++];
         }
 
@@ -129,6 +135,7 @@ namespace InvertedTomato.IO.Buffers {
             }
 #endif
 
+            SubOffset = 0;
             var ret = new Buffer<T>(Underlying, Start, count);
             Start += count;
 
@@ -145,6 +152,7 @@ namespace InvertedTomato.IO.Buffers {
                 output = default(T);
                 return false;
             } else {
+                SubOffset = 0;
                 output = Underlying[Start++];
                 return true;
             }
@@ -155,18 +163,52 @@ namespace InvertedTomato.IO.Buffers {
         /// </summary>
         /// <returns></returns>
         public void Reset() {
+            SubOffset = 0;
             Start = 0;
             End = 0;
         }
 
-        public void IncrementEnd(int count) {
+        /// <summary>
+        /// Increment end by one.
+        /// </summary>
+        public void IncrementEnd() { IncrementEnd(1); }
+
+        /// <summary>
+        /// Increment end by given offset. 
+        /// </summary>
+        /// <param name="offset"></param>
+        public void IncrementEnd(int offset) {
+            var end = offset + End;
 #if DEBUG
-            if (count > Available) {
+            if (offset < 0) {
+                throw new ArgumentOutOfRangeException("offset", "Must be at least 0.");
+            }
+            if (end > MaxCapacity) {
                 throw new BufferOverflowException("Insufficient space in buffer.");
             }
 #endif
 
-            End += count;
+            End = end;
+        }
+
+        /// <summary>
+        /// Increment bit by one.
+        /// </summary>
+        public void IncrementSubOffset() { IncrementSubOffset(1); }
+
+        /// <summary>
+        /// Increment bit by given offset.
+        /// </summary>
+        /// <param name="offset"></param>
+        public void IncrementSubOffset(int offset) {
+            var bit = offset + SubOffset;
+#if DEBUG
+            if (offset < 0) {
+                throw new ArgumentOutOfRangeException("offset", "Must be at least 0.");
+            }
+#endif
+
+            SubOffset = bit;
         }
 
         public ReadOnlyBuffer<T> AsReadOnly() {

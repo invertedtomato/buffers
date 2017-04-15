@@ -5,6 +5,7 @@ namespace InvertedTomato.IO.Bits {
     /// <summary>
     /// Write bits or groups of bits to a stream.
     /// </summary>
+    [Obsolete]
     public class BitWriter : IDisposable {
         // LEAST significant BIT is on the RIGHT of the byte
         // LEAST significant BYTE is the FIRST in the stream

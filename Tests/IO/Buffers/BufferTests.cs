@@ -1,8 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using InvertedTomato.IO.Buffers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 
-namespace InvertedTomato.IO.Buffers.Tests {
+namespace InvertedTomato.Tests {
     [TestClass]
     public class BufferTests {
         [TestMethod]
@@ -143,28 +144,38 @@ namespace InvertedTomato.IO.Buffers.Tests {
         public void Dequeue() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
 
+            buffer.IncrementSubOffset();
+            Assert.AreEqual(1, buffer.SubOffset);
+
             Assert.AreEqual(1, buffer.Dequeue());
             Assert.AreEqual(1, buffer.Start);
             Assert.AreEqual(2, buffer.End);
+            Assert.AreEqual(0, buffer.SubOffset);
 
             Assert.AreEqual(2, buffer.Dequeue());
             Assert.AreEqual(2, buffer.Start);
             Assert.AreEqual(2, buffer.End);
+            Assert.AreEqual(0, buffer.SubOffset);
         }
 
         [TestMethod]
         public void DequeueBuffer() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
 
+            buffer.IncrementSubOffset();
+            Assert.AreEqual(1, buffer.SubOffset);
+
             var extracted = buffer.DequeueBuffer(1);
             Assert.AreEqual(1, extracted.Used);
             Assert.AreEqual(1, extracted.Dequeue());
             Assert.AreEqual(1, buffer.Start);
             Assert.AreEqual(2, buffer.End);
+            Assert.AreEqual(0, buffer.SubOffset);
 
             Assert.AreEqual(2, buffer.Dequeue());
             Assert.AreEqual(2, buffer.Start);
             Assert.AreEqual(2, buffer.End);
+            Assert.AreEqual(0, buffer.SubOffset);
         }
 
         [TestMethod]
@@ -182,26 +193,33 @@ namespace InvertedTomato.IO.Buffers.Tests {
             byte output;
 
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
+            
+            buffer.IncrementSubOffset();
+            Assert.AreEqual(1, buffer.SubOffset);
 
             Assert.AreEqual(true, buffer.TryDequeue(out output));
             Assert.AreEqual(1, output);
             Assert.AreEqual(1, buffer.Start);
             Assert.AreEqual(2, buffer.End);
+            Assert.AreEqual(0, buffer.SubOffset);
 
             Assert.AreEqual(true, buffer.TryDequeue(out output));
             Assert.AreEqual(2, output);
             Assert.AreEqual(2, buffer.Start);
             Assert.AreEqual(2, buffer.End);
+            Assert.AreEqual(0, buffer.SubOffset);
 
             Assert.AreEqual(false, buffer.TryDequeue(out output));
             Assert.AreEqual(0, output);
             Assert.AreEqual(2, buffer.Start);
             Assert.AreEqual(2, buffer.End);
+            Assert.AreEqual(0, buffer.SubOffset);
 
             Assert.AreEqual(false, buffer.TryDequeue(out output));
             Assert.AreEqual(0, output);
             Assert.AreEqual(2, buffer.Start);
             Assert.AreEqual(2, buffer.End);
+            Assert.AreEqual(0, buffer.SubOffset);
         }
 
         [TestMethod]
@@ -332,11 +350,56 @@ namespace InvertedTomato.IO.Buffers.Tests {
             Assert.AreEqual(false, enumerator.MoveNext());
         }
 
+
+        [TestMethod]
+        public void IncremenentEnd_Single() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.IncrementEnd();
+            Assert.AreEqual(3, buffer.End);
+        }
         [TestMethod]
         public void IncremenentEnd() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
             buffer.IncrementEnd(2);
             Assert.AreEqual(4, buffer.End);
+        }
+        [TestMethod]
+        public void IncremenentEnd_NoChange() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.IncrementEnd(0);
+            Assert.AreEqual(2, buffer.End);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void IncremenentEnd_Negative() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.IncrementEnd(-1);
+        }
+
+
+        [TestMethod]
+        public void IncremenentSubOffset_Single() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.IncrementSubOffset();
+            Assert.AreEqual(1, buffer.SubOffset);
+        }
+        [TestMethod]
+        public void IncremenentSubOffset() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.IncrementSubOffset(2);
+            Assert.AreEqual(2, buffer.SubOffset);
+        }
+        [TestMethod]
+        public void IncremenentSubOffset_NoChange() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.IncrementSubOffset(0);
+            Assert.AreEqual(0, buffer.SubOffset);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void IncremenentSubOffset_Negative() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.IncrementSubOffset(-1);
         }
 
         [TestMethod]

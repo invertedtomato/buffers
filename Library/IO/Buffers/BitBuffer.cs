@@ -20,7 +20,7 @@ namespace InvertedTomato.IO.Buffers {
         public BitBuffer() { }
         public BitBuffer(byte buffer, int offset) {
 #if DEBUG
-            if(offset<0 || offset > 8) {
+            if (offset < 0 || offset > 8) {
                 throw new ArgumentOutOfRangeException("Offset must be between 0 and 8 inclusive.", "offset");
             }
 #endif

@@ -71,7 +71,6 @@ namespace InvertedTomato.IO.Buffers {
 #endif
 
             return target.BeginRead(buffer.GetUnderlying(), buffer.End, Math.Min(buffer.Available, maxCount), callback, state);
-        }
-        */
+        }*/
     }
 }
