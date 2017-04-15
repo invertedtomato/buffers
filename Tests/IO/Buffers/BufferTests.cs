@@ -381,31 +381,6 @@ namespace InvertedTomato.Tests {
         }
 
         [TestMethod]
-        public void IncremenentSubOffset_Single() {
-            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
-            buffer.IncrementSubOffset();
-            Assert.AreEqual(1, buffer.SubOffset);
-        }
-        [TestMethod]
-        public void IncremenentSubOffset() {
-            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
-            buffer.IncrementSubOffset(2);
-            Assert.AreEqual(2, buffer.SubOffset);
-        }
-        [TestMethod]
-        public void IncremenentSubOffset_NoChange() {
-            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
-            buffer.IncrementSubOffset(0);
-            Assert.AreEqual(0, buffer.SubOffset);
-        }
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void IncremenentSubOffset_Negative() {
-            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
-            buffer.IncrementSubOffset(-1);
-        }
-
-        [TestMethod]
         public void ToArray() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2, 3 });
             buffer.Dequeue();

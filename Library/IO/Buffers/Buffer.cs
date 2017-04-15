@@ -5,7 +5,7 @@ namespace InvertedTomato.IO.Buffers {
         /// <summary>
         /// An index within the current value that is currently in use (ignorable).
         /// </summary>
-        public int SubOffset { get; protected set; }
+        public int SubOffset { get; set; }
 
         /// <summary>
         /// Create a new buffer initialized to the given length.
@@ -115,7 +115,7 @@ namespace InvertedTomato.IO.Buffers {
                 throw new BufferOverflowException("Buffer is empty.");
             }
 #endif
-            
+
             return Underlying[Start++];
         }
 
@@ -133,7 +133,7 @@ namespace InvertedTomato.IO.Buffers {
                 throw new BufferOverflowException("Buffer does not contain requested number of values (requested: " + count + ", used: " + Used + ").");
             }
 #endif
-            
+
             var ret = new Buffer<T>(Underlying, Start, count);
             Start += count;
 
@@ -195,26 +195,6 @@ namespace InvertedTomato.IO.Buffers {
 
             // Update position
             End = pos;
-        }
-
-        /// <summary>
-        /// Increment bit by one.
-        /// </summary>
-        public void IncrementSubOffset() { IncrementSubOffset(1); }
-
-        /// <summary>
-        /// Increment bit by given offset.
-        /// </summary>
-        /// <param name="offset"></param>
-        public void IncrementSubOffset(int offset) {
-            var bit = offset + SubOffset;
-#if DEBUG
-            if (offset < 0) {
-                throw new ArgumentOutOfRangeException("offset", "Must be at least 0.");
-            }
-#endif
-
-            SubOffset = bit;
         }
 
         public ReadOnlyBuffer<T> AsReadOnly() {

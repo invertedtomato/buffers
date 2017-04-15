@@ -4,7 +4,7 @@
     <TargetFramework>netstandard1.0</TargetFramework>
     <AssemblyName>InvertedTomato.Buffers</AssemblyName>
     <RootNamespace>InvertedTomato</RootNamespace>
-    <Version>1.0.8</Version>
+    <Version>1.0.9</Version>
     <PackageLicenseUrl>https://github.com/invertedtomato/buffers/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/invertedtomato/buffers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/invertedtomato/buffers</RepositoryUrl>
