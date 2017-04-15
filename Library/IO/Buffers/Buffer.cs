@@ -169,26 +169,35 @@ namespace InvertedTomato.IO.Buffers {
         }
 
         /// <summary>
-        /// Increment end by one.
+        /// Move the start pointer.
         /// </summary>
-        public void IncrementEnd() { IncrementEnd(1); }
+        public void MoveStart(int offset) {
+            // Calculate the proposed new location
+            var pos = Start + offset;
+
+#if DEBUG
+            if (pos < 0 || pos > End) {
+                throw new OverflowException("New start would be " + pos + " which is out of range.");
+            }
+#endif
+            // Update position
+            Start = pos;
+        }
 
         /// <summary>
         /// Increment end by given offset. 
         /// </summary>
         /// <param name="offset"></param>
-        public void IncrementEnd(int offset) {
-            var end = offset + End;
+        public void MoveEnd(int offset) {
+            var pos = End + offset;
 #if DEBUG
-            if (offset < 0) {
-                throw new ArgumentOutOfRangeException("offset", "Must be at least 0.");
-            }
-            if (end > MaxCapacity) {
-                throw new BufferOverflowException("Insufficient space in buffer.");
+            if (pos < Start || pos > MaxCapacity) {
+                throw new OverflowException("New end would be " + pos + " which is out of range.");
             }
 #endif
 
-            End = end;
+            // Update position
+            End = pos;
         }
 
         /// <summary>

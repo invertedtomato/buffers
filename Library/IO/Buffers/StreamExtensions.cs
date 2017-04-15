@@ -41,7 +41,7 @@ namespace InvertedTomato.IO.Buffers {
             var length = target.Read(buffer.GetUnderlying(), buffer.End, count);
 
             // Increment buffer length
-            buffer.IncrementEnd(length);
+            buffer.MoveEnd(length);
 
             // Return number of bytes read
             return length;

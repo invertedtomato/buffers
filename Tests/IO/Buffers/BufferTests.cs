@@ -350,32 +350,52 @@ namespace InvertedTomato.Tests {
             Assert.AreEqual(false, enumerator.MoveNext());
         }
 
-
+        
         [TestMethod]
-        public void IncremenentEnd_Single() {
+        public void MoveEnd() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
-            buffer.IncrementEnd();
-            Assert.AreEqual(3, buffer.End);
-        }
-        [TestMethod]
-        public void IncremenentEnd() {
-            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
-            buffer.IncrementEnd(2);
+            buffer.MoveEnd(2);
             Assert.AreEqual(4, buffer.End);
-        }
-        [TestMethod]
-        public void IncremenentEnd_NoChange() {
-            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
-            buffer.IncrementEnd(0);
+            buffer.MoveEnd(-2);
+            Assert.AreEqual(2, buffer.End);
+            buffer.MoveEnd(0);
             Assert.AreEqual(2, buffer.End);
         }
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void IncremenentEnd_Negative() {
+        [ExpectedException(typeof(OverflowException))]
+        public void MoveEnd_TooHigh() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
-            buffer.IncrementEnd(-1);
+            buffer.MoveEnd(3);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(OverflowException))]
+        public void MoveEnd_TooLow() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.MoveEnd(-3);
         }
 
+        [TestMethod]
+        public void MoveStart() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.MoveStart(2);
+            Assert.AreEqual(2, buffer.Start);
+            buffer.MoveStart(-2);
+            Assert.AreEqual(0, buffer.Start);
+            buffer.MoveStart(0);
+            Assert.AreEqual(0, buffer.Start);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(OverflowException))]
+        public void MoveStart_TooHigh() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.MoveStart(3);
+        }
+        [TestMethod]
+        [ExpectedException(typeof(OverflowException))]
+        public void MoveStart_TooLow() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
+            buffer.MoveStart(-1);
+        }
 
         [TestMethod]
         public void IncremenentSubOffset_Single() {
@@ -400,13 +420,6 @@ namespace InvertedTomato.Tests {
         public void IncremenentSubOffset_Negative() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
             buffer.IncrementSubOffset(-1);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(BufferOverflowException))]
-        public void IncremenentEnd_Overflow() {
-            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
-            buffer.IncrementEnd(3);
         }
 
         [TestMethod]
