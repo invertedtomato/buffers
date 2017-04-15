@@ -144,38 +144,28 @@ namespace InvertedTomato.Tests {
         public void Dequeue() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
 
-            buffer.IncrementSubOffset();
-            Assert.AreEqual(1, buffer.SubOffset);
-
             Assert.AreEqual(1, buffer.Dequeue());
             Assert.AreEqual(1, buffer.Start);
             Assert.AreEqual(2, buffer.End);
-            Assert.AreEqual(0, buffer.SubOffset);
 
             Assert.AreEqual(2, buffer.Dequeue());
             Assert.AreEqual(2, buffer.Start);
             Assert.AreEqual(2, buffer.End);
-            Assert.AreEqual(0, buffer.SubOffset);
         }
 
         [TestMethod]
         public void DequeueBuffer() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
 
-            buffer.IncrementSubOffset();
-            Assert.AreEqual(1, buffer.SubOffset);
-
             var extracted = buffer.DequeueBuffer(1);
             Assert.AreEqual(1, extracted.Used);
             Assert.AreEqual(1, extracted.Dequeue());
             Assert.AreEqual(1, buffer.Start);
             Assert.AreEqual(2, buffer.End);
-            Assert.AreEqual(0, buffer.SubOffset);
 
             Assert.AreEqual(2, buffer.Dequeue());
             Assert.AreEqual(2, buffer.Start);
             Assert.AreEqual(2, buffer.End);
-            Assert.AreEqual(0, buffer.SubOffset);
         }
 
         [TestMethod]
@@ -193,33 +183,26 @@ namespace InvertedTomato.Tests {
             byte output;
 
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
-            
-            buffer.IncrementSubOffset();
-            Assert.AreEqual(1, buffer.SubOffset);
 
             Assert.AreEqual(true, buffer.TryDequeue(out output));
             Assert.AreEqual(1, output);
             Assert.AreEqual(1, buffer.Start);
             Assert.AreEqual(2, buffer.End);
-            Assert.AreEqual(0, buffer.SubOffset);
 
             Assert.AreEqual(true, buffer.TryDequeue(out output));
             Assert.AreEqual(2, output);
             Assert.AreEqual(2, buffer.Start);
             Assert.AreEqual(2, buffer.End);
-            Assert.AreEqual(0, buffer.SubOffset);
 
             Assert.AreEqual(false, buffer.TryDequeue(out output));
             Assert.AreEqual(0, output);
             Assert.AreEqual(2, buffer.Start);
             Assert.AreEqual(2, buffer.End);
-            Assert.AreEqual(0, buffer.SubOffset);
 
             Assert.AreEqual(false, buffer.TryDequeue(out output));
             Assert.AreEqual(0, output);
             Assert.AreEqual(2, buffer.Start);
             Assert.AreEqual(2, buffer.End);
-            Assert.AreEqual(0, buffer.SubOffset);
         }
 
         [TestMethod]

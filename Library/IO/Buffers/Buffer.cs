@@ -115,8 +115,7 @@ namespace InvertedTomato.IO.Buffers {
                 throw new BufferOverflowException("Buffer is empty.");
             }
 #endif
-
-            SubOffset = 0;
+            
             return Underlying[Start++];
         }
 
@@ -134,8 +133,7 @@ namespace InvertedTomato.IO.Buffers {
                 throw new BufferOverflowException("Buffer does not contain requested number of values (requested: " + count + ", used: " + Used + ").");
             }
 #endif
-
-            SubOffset = 0;
+            
             var ret = new Buffer<T>(Underlying, Start, count);
             Start += count;
 
@@ -152,7 +150,6 @@ namespace InvertedTomato.IO.Buffers {
                 output = default(T);
                 return false;
             } else {
-                SubOffset = 0;
                 output = Underlying[Start++];
                 return true;
             }
