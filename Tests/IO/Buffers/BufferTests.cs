@@ -14,7 +14,7 @@ namespace InvertedTomato.Tests {
             Assert.AreEqual(0, buffer.End);
             Assert.AreEqual(0, buffer.Used);
             Assert.AreEqual(2, buffer.Available);
-            Assert.AreEqual(2, buffer.MaxCapacity);
+            Assert.AreEqual(2, buffer.Capacity);
             Assert.AreEqual(false, buffer.IsFull);
             Assert.AreEqual(true, buffer.IsEmpty);
         }
@@ -33,7 +33,7 @@ namespace InvertedTomato.Tests {
 
             Assert.AreEqual(0, buffer.Start);
             Assert.AreEqual(1, buffer.End);
-            Assert.AreEqual(2, buffer.MaxCapacity);
+            Assert.AreEqual(2, buffer.Capacity);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace InvertedTomato.Tests {
 
             Assert.AreEqual(0, buffer.Start);
             Assert.AreEqual(2, buffer.End);
-            Assert.AreEqual(4, buffer.MaxCapacity);
+            Assert.AreEqual(4, buffer.Capacity);
         }
 
         [TestMethod]
@@ -63,7 +63,7 @@ namespace InvertedTomato.Tests {
             Assert.AreEqual(1, buffer.End);
             Assert.AreEqual(1, buffer.Used);
             Assert.AreEqual(1, buffer.Available);
-            Assert.AreEqual(2, buffer.MaxCapacity);
+            Assert.AreEqual(2, buffer.Capacity);
             Assert.AreEqual(false, buffer.IsFull);
             Assert.AreEqual(false, buffer.IsEmpty);
 
@@ -81,7 +81,7 @@ namespace InvertedTomato.Tests {
             Assert.AreEqual(2, buffer.End);
             Assert.AreEqual(2, buffer.Used);
             Assert.AreEqual(0, buffer.Available);
-            Assert.AreEqual(2, buffer.MaxCapacity);
+            Assert.AreEqual(2, buffer.Capacity);
             Assert.AreEqual(true, buffer.IsFull);
             Assert.AreEqual(false, buffer.IsEmpty);
         }

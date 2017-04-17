@@ -10,10 +10,10 @@ namespace InvertedTomato.IO.Buffers {
         /// <summary>
         /// Create a new buffer initialized to the given length.
         /// </summary>
-        /// <param name="maxCapacity"></param>
-        public Buffer(int maxCapacity) : base(new T[maxCapacity], 0, 0) {
+        /// <param name="capacity"></param>
+        public Buffer(int capacity) : base(new T[capacity], 0, 0) {
 #if DEBUG
-            if (maxCapacity < 0) {
+            if (capacity < 0) {
                 throw new ArgumentOutOfRangeException("Must be at least 0.", "maxCapacity");
             }
 #endif
@@ -188,7 +188,7 @@ namespace InvertedTomato.IO.Buffers {
         public void MoveEnd(int offset) {
             var pos = End + offset;
 #if DEBUG
-            if (pos < Start || pos > MaxCapacity) {
+            if (pos < Start || pos > Capacity) {
                 throw new OverflowException("New end would be " + pos + " which is out of range.");
             }
 #endif

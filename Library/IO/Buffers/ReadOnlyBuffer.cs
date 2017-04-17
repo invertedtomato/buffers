@@ -23,13 +23,18 @@ namespace InvertedTomato.IO.Buffers {
         /// The number of additional values that could be added to the buffer.
         /// </summary>
         public int Available { get { return Underlying.Length - End; } }
+        
+        /// <summary>
+        /// The maximum number of values that could be added under optimal circumstances.
+        /// </summary>
+        public int Capacity { get { return Underlying.Length; } }
 
         /// <summary>
         /// The maximum number of values that could be added in optimal circumstances.
         /// </summary>
-        public int MaxCapacity { get { return Underlying.Length; } }
+        [Obsolete("Use 'Capacity' instead.")]
+        public int MaxCapacity { get { return Capacity; } }
 
-        //public bool IsDirty { get { return Used > 0; } }
         /// <summary>
         /// Is the buffer unable to accept any additional values.
         /// </summary>
@@ -133,7 +138,7 @@ namespace InvertedTomato.IO.Buffers {
                 return true;
             }
         }
-        
+
         /// <summary>
         /// Return a specific value from the buffer without changing Start.
         /// </summary>
