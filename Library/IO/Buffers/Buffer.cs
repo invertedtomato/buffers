@@ -141,6 +141,13 @@ namespace InvertedTomato.IO.Buffers {
         }
 
         /// <summary>
+        /// Dequeue a number of values as an array.
+        /// </summary>
+        public T[] DequeueArray(int count) {
+            return DequeueBuffer(count).ToArray();
+        }
+
+        /// <summary>
         /// Get the next value from the buffer using try pattern.
         /// </summary>
         /// <param name="output"></param>
