@@ -33,8 +33,8 @@ namespace InvertedTomato.IO.Buffers {
             }
 #endif
 
-            if (buffer.Available < count) {
-                count = buffer.Available;
+            if (buffer.Writable < count) {
+                count = buffer.Writable;
             }
 
             // Read into buffer

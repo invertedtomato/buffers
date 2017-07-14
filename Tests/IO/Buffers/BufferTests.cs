@@ -12,11 +12,11 @@ namespace InvertedTomato.Tests {
 
             Assert.AreEqual(0, buffer.Start);
             Assert.AreEqual(0, buffer.End);
-            Assert.AreEqual(0, buffer.Used);
-            Assert.AreEqual(2, buffer.Available);
+            Assert.AreEqual(0, buffer.Readable);
+            Assert.AreEqual(2, buffer.Writable);
             Assert.AreEqual(2, buffer.Capacity);
-            Assert.AreEqual(false, buffer.IsFull);
-            Assert.AreEqual(true, buffer.IsEmpty);
+            Assert.AreEqual(true, buffer.IsWritable);
+            Assert.AreEqual(false, buffer.IsReadable);
         }
 
         [TestMethod]
@@ -61,11 +61,11 @@ namespace InvertedTomato.Tests {
             // Get others
             Assert.AreEqual(0, buffer.Start);
             Assert.AreEqual(1, buffer.End);
-            Assert.AreEqual(1, buffer.Used);
-            Assert.AreEqual(1, buffer.Available);
+            Assert.AreEqual(1, buffer.Readable);
+            Assert.AreEqual(1, buffer.Writable);
             Assert.AreEqual(2, buffer.Capacity);
-            Assert.AreEqual(false, buffer.IsFull);
-            Assert.AreEqual(false, buffer.IsEmpty);
+            Assert.AreEqual(true, buffer.IsReadable);
+            Assert.AreEqual(true, buffer.IsWritable);
 
             // Second enqueue
             buffer.Enqueue(1);
@@ -79,11 +79,11 @@ namespace InvertedTomato.Tests {
             // Check others
             Assert.AreEqual(0, buffer.Start);
             Assert.AreEqual(2, buffer.End);
-            Assert.AreEqual(2, buffer.Used);
-            Assert.AreEqual(0, buffer.Available);
+            Assert.AreEqual(2, buffer.Readable);
+            Assert.AreEqual(0, buffer.Writable);
             Assert.AreEqual(2, buffer.Capacity);
-            Assert.AreEqual(true, buffer.IsFull);
-            Assert.AreEqual(false, buffer.IsEmpty);
+            Assert.AreEqual(false, buffer.IsWritable);
+            Assert.AreEqual(true, buffer.IsReadable);
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@ namespace InvertedTomato.Tests {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 10);
 
             buffer.EnqueueBuffer(buffer);
-            Assert.AreEqual(4, buffer.Used);
+            Assert.AreEqual(4, buffer.Readable);
             var result = buffer.ToArray();
             Assert.AreEqual(1, result[0]);
             Assert.AreEqual(2, result[1]);
@@ -105,7 +105,7 @@ namespace InvertedTomato.Tests {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);
 
             buffer.EnqueueBuffer(buffer);
-            Assert.AreEqual(4, buffer.Used);
+            Assert.AreEqual(4, buffer.Readable);
             var result = buffer.ToArray();
             Assert.AreEqual(1, result[0]);
             Assert.AreEqual(2, result[1]);
@@ -120,7 +120,7 @@ namespace InvertedTomato.Tests {
             buffer.EnqueueArray(new byte[] { 1, 2 });
 
 
-            Assert.AreEqual(4, buffer.Used);
+            Assert.AreEqual(4, buffer.Readable);
 
             // Check underlying
             var underlying = buffer.GetUnderlying();
@@ -158,7 +158,7 @@ namespace InvertedTomato.Tests {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
 
             var extracted = buffer.DequeueBuffer(1);
-            Assert.AreEqual(1, extracted.Used);
+            Assert.AreEqual(1, extracted.Readable);
             Assert.AreEqual(1, extracted.Dequeue());
             Assert.AreEqual(1, buffer.Start);
             Assert.AreEqual(2, buffer.End);

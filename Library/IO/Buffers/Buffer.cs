@@ -46,7 +46,7 @@ namespace InvertedTomato.IO.Buffers {
         /// <param name="value"></param>
         public void Enqueue(T value) {
 #if DEBUG
-            if (IsFull) {
+            if (!IsWritable) {
                 throw new BufferOverflowException("Buffer is already full.");
             }
 #endif
@@ -63,13 +63,13 @@ namespace InvertedTomato.IO.Buffers {
             if (null == buffer) {
                 throw new ArgumentNullException("buffer");
             }
-            if (buffer.Used > Available) {
-                throw new BufferOverflowException("Insufficient space in buffer. " + Available + " available, but " + buffer.Used + " needed.");
+            if (buffer.Readable > Writable) {
+                throw new BufferOverflowException("Insufficient space in buffer. " + Writable + " available, but " + buffer.Readable + " needed.");
             }
 #endif
 
-            Array.Copy(buffer.GetUnderlying(), buffer.Start, Underlying, End, buffer.Used);
-            End += buffer.Used;
+            Array.Copy(buffer.GetUnderlying(), buffer.Start, Underlying, End, buffer.Readable);
+            End += buffer.Readable;
         }
 
         /// <summary>
@@ -81,8 +81,8 @@ namespace InvertedTomato.IO.Buffers {
             if (null == values) {
                 throw new ArgumentNullException("buffer");
             }
-            if (values.Length > Available) {
-                throw new BufferOverflowException("Insufficient space in buffer. " + Available + " available, but " + values.Length + " needed.");
+            if (values.Length > Writable) {
+                throw new BufferOverflowException("Insufficient space in buffer. " + Writable + " available, but " + values.Length + " needed.");
             }
 #endif
 
@@ -111,7 +111,7 @@ namespace InvertedTomato.IO.Buffers {
         /// <returns></returns>
         public T Dequeue() {
 #if DEBUG
-            if (IsEmpty) {
+            if (!IsReadable) {
                 throw new BufferOverflowException("Buffer is empty.");
             }
 #endif
@@ -129,8 +129,8 @@ namespace InvertedTomato.IO.Buffers {
             if (count < 0) {
                 throw new ArgumentOutOfRangeException("Must be at least 0.");
             }
-            if (Used < count) {
-                throw new BufferOverflowException("Buffer does not contain requested number of values (requested: " + count + ", used: " + Used + ").");
+            if (Readable < count) {
+                throw new BufferOverflowException("Buffer does not contain requested number of values (requested: " + count + ", used: " + Readable + ").");
             }
 #endif
 
@@ -153,12 +153,12 @@ namespace InvertedTomato.IO.Buffers {
         /// <param name="output"></param>
         /// <returns></returns>
         public bool TryDequeue(out T output) {
-            if (IsEmpty) {
-                output = default(T);
-                return false;
-            } else {
+            if (IsReadable) {
                 output = Underlying[Start++];
                 return true;
+            } else {
+                output = default(T);
+                return false;
             }
         }
 

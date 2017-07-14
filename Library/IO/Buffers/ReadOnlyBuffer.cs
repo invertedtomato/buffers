@@ -13,16 +13,20 @@ namespace InvertedTomato.IO.Buffers {
         /// The position of the last used byte.
         /// </summary>
         public int End { get; protected set; }
-
+        
         /// <summary>
         /// The number of values in the buffer.
         /// </summary>
-        public int Used { get { return End - Start; } }
+        public int Readable { get { return End - Start; } }
+        [Obsolete("Use 'Readable' instead.")]
+        public int Used { get { return Readable; } }
 
         /// <summary>
         /// The number of additional values that could be added to the buffer.
         /// </summary>
-        public int Available { get { return Underlying.Length - End; } }
+        public int Writable { get { return Underlying.Length - End; } }
+        [Obsolete("Use 'Writable' instead.")]
+        public int Available { get { return Writable; } }
         
         /// <summary>
         /// The maximum number of values that could be added under optimal circumstances.
@@ -36,14 +40,26 @@ namespace InvertedTomato.IO.Buffers {
         public int MaxCapacity { get { return Capacity; } }
 
         /// <summary>
+        /// Is there at least one value available for reading.
+        /// </summary>
+        public bool IsReadable { get { return Readable > 0; } }
+
+        /// <summary>
+        /// Is there at least one value available for writing.
+        /// </summary>
+        public bool IsWritable { get { return Writable > 0; } }
+
+        /// <summary>
         /// Is the buffer unable to accept any additional values.
         /// </summary>
-        public bool IsFull { get { return Available == 0; } }
+        [Obsolete("Use '!IsWritable' instead.")]
+        public bool IsFull { get { return Writable == 0; } }
 
         /// <summary>
         /// Is the buffer empty and unable to provide any more values.
         /// </summary>
-        public bool IsEmpty { get { return Used == 0; } }
+        [Obsolete("Use '!IsReadable' instead.")]
+        public bool IsEmpty { get { return Readable == 0; } }
 
         /// <summary>
         /// The underlying buffer array.
@@ -103,7 +119,7 @@ namespace InvertedTomato.IO.Buffers {
         /// <returns></returns>
         public T Peek() {
 #if DEBUG
-            if (IsEmpty) {
+            if (!IsReadable) {
                 throw new BufferOverflowException("Buffer is empty.");
             }
 #endif
@@ -130,12 +146,12 @@ namespace InvertedTomato.IO.Buffers {
         /// <param name="output"></param>
         /// <returns></returns>
         public bool TryPeek(out T output) {
-            if (IsEmpty) {
+            if (IsReadable) {
+                output = Underlying[Start];
+                return true; 
+            } else {
                 output = default(T);
                 return false;
-            } else {
-                output = Underlying[Start];
-                return true;
             }
         }
 
@@ -146,7 +162,7 @@ namespace InvertedTomato.IO.Buffers {
         /// <returns></returns>
         public T Peek(int position) {
 #if DEBUG
-            if (position < 0 || position >= Used) {
+            if (position < 0 || position >= Readable) {
                 throw new BufferOverflowException("No value in given position.");
             }
 #endif
@@ -161,16 +177,16 @@ namespace InvertedTomato.IO.Buffers {
         /// <returns></returns>
         public Buffer<T> Resize(int maxCapacity) {
             // Check capacity is sufficient
-            if (maxCapacity < Used) {
-                throw new BufferOverflowException("Length is smaller than the number of used bytes (" + Used + ").");
+            if (maxCapacity < Readable) {
+                throw new BufferOverflowException("Length is smaller than the number of used bytes (" + Readable + ").");
             }
 
             // Create new underlying
             var underlying = new T[maxCapacity];
-            Array.Copy(Underlying, Start, underlying, 0, Used);
+            Array.Copy(Underlying, Start, underlying, 0, Readable);
 
             // Return new buffer
-            return new Buffer<T>(underlying, Used);
+            return new Buffer<T>(underlying, Readable);
         }
 
         /// <summary>
@@ -186,8 +202,8 @@ namespace InvertedTomato.IO.Buffers {
         /// </summary>
         /// <returns></returns>
         public T[] ToArray() {
-            var underlying = new T[Used];
-            Array.Copy(Underlying, Start, underlying, 0, Used);
+            var underlying = new T[Readable];
+            Array.Copy(Underlying, Start, underlying, 0, Readable);
 
             return underlying;
         }
@@ -203,7 +219,7 @@ namespace InvertedTomato.IO.Buffers {
         public override string ToString() {
             var byteArray = Underlying as byte[];
             if (null != byteArray) {
-                return BitConverter.ToString(byteArray, Start, Used);
+                return BitConverter.ToString(byteArray, Start, Readable);
             }
 
             var sb = new System.Text.StringBuilder();
