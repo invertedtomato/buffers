@@ -56,13 +56,8 @@ namespace InvertedTomato.IO.Buffers.ByteBuffers {
             return Write(BitConverter.GetBytes(value));
         }
 
-        public ByteBufferWriter WriteBoolean(bool value, byte trueValue = 0xff) {
-#if DEBUG
-            if (trueValue == 0) {
-                throw new ArgumentOutOfRangeException("Cannot be equal to 0.", "trueValue");
-            }
-#endif
-            return Write(new byte[] { value ? trueValue : (byte)0x00 });
+        public ByteBufferWriter WriteBoolean(bool value) {
+            return Write(new byte[] { value ? (byte)0xff : (byte)0x00 });
         }
 
         public ByteBufferWriter WriteGuid(Guid value) {
