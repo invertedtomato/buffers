@@ -2,6 +2,13 @@
 
 namespace InvertedTomato.IO.Buffers {
     public class Buffer<T> : ReadOnlyBuffer<T> {
+        private const double GrowthRate = 0.5;
+
+        /// <summary>
+        /// Automatically resize when the buffer has insufficent capacity.
+        /// </summary>
+        public bool AutoGrow { get; set; }
+
         /// <summary>
         /// An index within the current value that is currently in use (ignorable).
         /// </summary>
@@ -45,11 +52,13 @@ namespace InvertedTomato.IO.Buffers {
         /// </summary>
         /// <param name="value"></param>
         public void Enqueue(T value) {
-#if DEBUG
-            if (!IsWritable) {
-                throw new BufferOverflowException("Buffer is already full.");
+            if (Writable < 1) {
+                if (AutoGrow) {
+                    GrowExponential(1);
+                } else {
+                    throw new BufferOverflowException("Insufficient space in buffer. " + Writable + " available, but " + 1 + " needed. Consider enabling auto-grow.");
+                }
             }
-#endif
 
             Underlying[End++] = value;
         }
@@ -63,10 +72,14 @@ namespace InvertedTomato.IO.Buffers {
             if (null == buffer) {
                 throw new ArgumentNullException("buffer");
             }
-            if (buffer.Readable > Writable) {
-                throw new BufferOverflowException("Insufficient space in buffer. " + Writable + " available, but " + buffer.Readable + " needed.");
-            }
 #endif
+            if (buffer.Readable > Writable) {
+                if (AutoGrow) {
+                    GrowExponential(buffer.Readable);
+                } else {
+                    throw new BufferOverflowException("Insufficient space in buffer. " + Writable + " available, but " + buffer.Readable + " needed. Consider enabling auto-grow.");
+                }
+            }
 
             Array.Copy(buffer.GetUnderlying(), buffer.Start, Underlying, End, buffer.Readable);
             End += buffer.Readable;
@@ -81,10 +94,14 @@ namespace InvertedTomato.IO.Buffers {
             if (null == values) {
                 throw new ArgumentNullException("buffer");
             }
-            if (values.Length > Writable) {
-                throw new BufferOverflowException("Insufficient space in buffer. " + Writable + " available, but " + values.Length + " needed.");
-            }
 #endif
+            if (values.Length > Writable) {
+                if (AutoGrow) {
+                    GrowExponential(values.Length);
+                } else {
+                    throw new BufferOverflowException("Insufficient space in buffer. " + Writable + " available, but " + values.Length + " needed. Consider enabling auto-grow.");
+                }
+            }
 
             Array.Copy(values, 0, Underlying, End, values.Length);
             End += values.Length;
@@ -206,6 +223,37 @@ namespace InvertedTomato.IO.Buffers {
 
         public ReadOnlyBuffer<T> AsReadOnly() {
             return this;
+        }
+
+        /// <summary>
+        /// Increases the number of writable slots exponentially, with the option of specifying a absolute minimum increase.
+        /// </summary>
+        public void GrowExponential(int min = 0) {
+            // Calculate new size
+            var increase = (int)Math.Max(Underlying.Length * GrowthRate, min);
+
+            // Grow
+            Grow(increase);
+        }
+
+        /// <summary>
+        /// Increase the number of writable slots by a given value.
+        /// </summary>
+        public void Grow(int increase) {
+#if DEBUG
+            if (increase < 0) {
+                throw new ArgumentException("Must be at least 0.", "increase");
+            }
+#endif
+
+            // Create new underlying
+            var underlying = new T[Underlying.Length + increase];
+
+            // Copy all values (not just used ones, in case someone moves a pointer backwards)
+            Array.Copy(Underlying, 0, underlying, 0, Underlying.Length);
+
+            // Replace underlying
+            Underlying = underlying;
         }
     }
 }

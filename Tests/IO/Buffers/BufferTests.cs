@@ -139,6 +139,16 @@ namespace InvertedTomato.Tests {
             buffer.Enqueue(2);
             buffer.Enqueue(3);
         }
+        
+        [TestMethod]
+        public void Enqueue_AutoGrow() {
+            var buffer = new Buffer<byte>(2);
+            buffer.AutoGrow = true;
+            buffer.Enqueue(1);
+            buffer.Enqueue(2);
+            buffer.Enqueue(3);
+        }
+
 
         [TestMethod]
         public void Dequeue() {
@@ -289,36 +299,36 @@ namespace InvertedTomato.Tests {
         }
 
         [TestMethod]
-        public void Resize_Start() {
+        public void Trim_Start() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
-            var buffer2 = buffer.Resize(8);
+            var buffer2 = buffer.Trim(8);
             Assert.AreEqual(buffer.Start, buffer2.Start);
             Assert.AreEqual(buffer.End, buffer2.End);
             Assert.AreEqual(buffer.Peek(), buffer2.Peek());
         }
 
         [TestMethod]
-        public void Resize_StartPlusOne() {
+        public void Trim_StartPlusOne() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
             buffer.Dequeue();
 
-            var buffer2 = buffer.Resize(8);
+            var buffer2 = buffer.Trim(8);
             Assert.AreEqual(0, buffer2.Start);
             Assert.AreEqual(1, buffer2.End);
             Assert.AreEqual(buffer.Peek(), buffer2.Peek());
         }
 
         [TestMethod]
-        public void Resize_AlmostOverflow() {
+        public void Trim_AlmostOverflow() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
-            buffer.Resize(2);
+            buffer.Trim(2);
         }
 
         [TestMethod]
         [ExpectedException(typeof(BufferOverflowException))]
-        public void Resize_Overflow() {
+        public void Trim_Overflow() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
-            buffer.Resize(1);
+            buffer.Trim(1);
         }
 
         [TestMethod]
@@ -437,6 +447,17 @@ namespace InvertedTomato.Tests {
         public void Replace_IndexTooHigh() {
             var buffer = new Buffer<int>(new int[] { 1, 2, 3 }, 1, 2);
             buffer.Replace(3, 5);
+        }
+
+
+        [TestMethod]
+        public void Grow() {
+            var buffer = new Buffer<byte>(2);
+            buffer.GrowExponential();
+            Assert.AreEqual(buffer.Capacity, 3);
+
+            buffer.GrowExponential(20);
+            Assert.AreEqual(buffer.Capacity, 23);
         }
     }
 }

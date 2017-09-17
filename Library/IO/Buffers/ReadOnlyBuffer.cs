@@ -13,7 +13,7 @@ namespace InvertedTomato.IO.Buffers {
         /// The position of the last used byte.
         /// </summary>
         public int End { get; protected set; }
-        
+
         /// <summary>
         /// The number of values in the buffer.
         /// </summary>
@@ -27,7 +27,7 @@ namespace InvertedTomato.IO.Buffers {
         public int Writable { get { return Underlying.Length - End; } }
         [Obsolete("Use 'Writable' instead.")]
         public int Available { get { return Writable; } }
-        
+
         /// <summary>
         /// The maximum number of values that could be added under optimal circumstances.
         /// </summary>
@@ -64,7 +64,7 @@ namespace InvertedTomato.IO.Buffers {
         /// <summary>
         /// The underlying buffer array.
         /// </summary>
-        protected readonly T[] Underlying;
+        protected T[] Underlying;
 
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace InvertedTomato.IO.Buffers {
         public bool TryPeek(out T output) {
             if (IsReadable) {
                 output = Underlying[Start];
-                return true; 
+                return true;
             } else {
                 output = default(T);
                 return false;
@@ -175,14 +175,22 @@ namespace InvertedTomato.IO.Buffers {
         /// </summary>
         /// <param name="maxCapacity"></param>
         /// <returns></returns>
+        [Obsolete("Use AutoGrow or Trim instead.")]
         public Buffer<T> Resize(int maxCapacity) {
+            return Trim(maxCapacity);
+        }
+
+        /// <summary>
+        /// Create a new trimmed buffer with read values remove, and with a specified number of writable slots available.
+        /// </summary>
+        public Buffer<T> Trim(int writable) {
             // Check capacity is sufficient
-            if (maxCapacity < Readable) {
+            if (writable < Readable) {
                 throw new BufferOverflowException("Length is smaller than the number of used bytes (" + Readable + ").");
             }
 
             // Create new underlying
-            var underlying = new T[maxCapacity];
+            var underlying = new T[writable];
             Array.Copy(Underlying, Start, underlying, 0, Readable);
 
             // Return new buffer
