@@ -111,7 +111,7 @@ namespace InvertedTomato.IO.Buffers {
             }
 
             if (count == -1) {
-                count = values.Length;
+                count = values.Length - offset;
             }
             Array.Copy(values, offset, Underlying, End, count);
             End += count;

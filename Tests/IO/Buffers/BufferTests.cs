@@ -132,7 +132,25 @@ namespace InvertedTomato.Tests {
         }
 
         [TestMethod]
-        public void Enqueue_Array_Subset() {
+        public void Enqueue_Array_Offset() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 10);
+
+            buffer.EnqueueArray(new byte[] { 1, 2, 3, 4 }, 2);
+
+
+            Assert.AreEqual(4, buffer.Readable);
+
+            // Check underlying
+            var underlying = buffer.GetUnderlying();
+            Assert.AreEqual(10, underlying.Length);
+            Assert.AreEqual(1, underlying[0]);
+            Assert.AreEqual(2, underlying[1]);
+            Assert.AreEqual(3, underlying[2]);
+            Assert.AreEqual(4, underlying[3]);
+        }
+
+        [TestMethod]
+        public void Enqueue_Array_OffsetCount() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 10);
 
             buffer.EnqueueArray(new byte[] { 1, 2, 3, 4 }, 2, 1);
