@@ -132,6 +132,23 @@ namespace InvertedTomato.Tests {
         }
 
         [TestMethod]
+        public void Enqueue_Array_Subset() {
+            var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 10);
+
+            buffer.EnqueueArray(new byte[] { 1, 2, 3, 4 }, 2, 1);
+
+
+            Assert.AreEqual(3, buffer.Readable);
+
+            // Check underlying
+            var underlying = buffer.GetUnderlying();
+            Assert.AreEqual(10, underlying.Length);
+            Assert.AreEqual(1, underlying[0]);
+            Assert.AreEqual(2, underlying[1]);
+            Assert.AreEqual(3, underlying[2]);
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(BufferOverflowException))]
         public void Enqueue_Overflow() {
             var buffer = new Buffer<byte>(2);
@@ -139,7 +156,7 @@ namespace InvertedTomato.Tests {
             buffer.Enqueue(2);
             buffer.Enqueue(3);
         }
-        
+
         [TestMethod]
         public void Enqueue_AutoGrow() {
             var buffer = new Buffer<byte>(2);
@@ -261,7 +278,7 @@ namespace InvertedTomato.Tests {
 
             Assert.AreEqual(false, buffer.TryPeek(out value));
         }
-        
+
         [TestMethod]
         public void Peek_Absolute() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 });
@@ -343,7 +360,7 @@ namespace InvertedTomato.Tests {
             Assert.AreEqual(false, enumerator.MoveNext());
         }
 
-        
+
         [TestMethod]
         public void MoveEnd() {
             var buffer = new Buffer<byte>(new byte[] { 1, 2 }, 4);

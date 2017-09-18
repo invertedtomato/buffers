@@ -89,12 +89,19 @@ namespace InvertedTomato.IO.Buffers {
         /// Append an array of values.
         /// </summary>
         /// <param name="values"></param>
-        public void EnqueueArray(T[] values) {
+        public void EnqueueArray(T[] values, int offset = 0, int count = -1) {
 #if DEBUG
             if (null == values) {
                 throw new ArgumentNullException("buffer");
             }
+            if (offset < 0 || offset > values.Length) {
+                throw new ArgumentOutOfRangeException("Must be at least 0 and no more than the underlying length.", "offset");
+            }
+            if (count < -1) {
+                throw new ArgumentOutOfRangeException("Must be at least 0.", "count");
+            }
 #endif
+
             if (values.Length > Writable) {
                 if (AutoGrow) {
                     GrowExponential(values.Length);
@@ -103,8 +110,11 @@ namespace InvertedTomato.IO.Buffers {
                 }
             }
 
-            Array.Copy(values, 0, Underlying, End, values.Length);
-            End += values.Length;
+            if (count == -1) {
+                count = values.Length;
+            }
+            Array.Copy(values, offset, Underlying, End, count);
+            End += count;
         }
 
         /// <summary>
