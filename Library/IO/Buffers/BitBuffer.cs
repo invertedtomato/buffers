@@ -1,75 +1,76 @@
 ﻿using System;
 
 namespace InvertedTomato.IO.Buffers {
-    [Obsolete]
-    public class BitBuffer {
-        static public implicit operator byte(BitBuffer value) {
-            return value.Buffer;
-        }
+	[Obsolete]
+	public class BitBuffer {
+        /// <summary>
+        ///     The underlying buffer.
+        /// </summary>
+        private Byte Buffer;
 
         /// <summary>
-        /// The underlying buffer.
+        ///     The position in the underlying buffer.
         /// </summary>
-        private byte Buffer;
+        private Int32 Offset;
 
-        /// <summary>
-        /// The position in the underlying buffer.
-        /// </summary>
-        private int Offset;
+		public BitBuffer() { }
 
-        public BitBuffer() { }
-        public BitBuffer(byte buffer, int offset) {
+		public BitBuffer(Byte buffer, Int32 offset) {
 #if DEBUG
-            if (offset < 0 || offset > 8) {
-                throw new ArgumentOutOfRangeException("Offset must be between 0 and 8 inclusive.", "offset");
-            }
+			if (offset < 0 || offset > 8) {
+				throw new ArgumentOutOfRangeException("Offset must be between 0 and 8 inclusive.", "offset");
+			}
 #endif
 
-            // Store
-            Buffer = buffer;
-            Offset = offset;
-        }
+			// Store
+			Buffer = buffer;
+			Offset = offset;
+		}
 
         /// <summary>
-        /// If the buffer is full.
+        ///     If the buffer is full.
         /// </summary>
-        public bool IsFull { get { return Offset == 8; } }
+        public Boolean IsFull => Offset == 8;
 
         /// <summary>
-        /// If the buffer contains anything.
+        ///     If the buffer contains anything.
         /// </summary>
-        public bool IsDirty { get { return Offset > 0; } }
+        public Boolean IsDirty => Offset > 0;
 
-        public bool Append(bool value) {
+		public static implicit operator Byte(BitBuffer value) {
+			return value.Buffer;
+		}
+
+		public Boolean Append(Boolean value) {
 #if DEBUG
-            // Check if buffer is full
-            if (Offset == 8) {
-                throw new OverflowException("Buffer full");
-            }
+			// Check if buffer is full
+			if (Offset == 8) {
+				throw new OverflowException("Buffer full");
+			}
 #endif
-            // Write bit
-            if (value) {
-                Buffer |= (byte)(1 << (7 - Offset));
-            }
+			// Write bit
+			if (value) {
+				Buffer |= (Byte) (1 << (7 - Offset));
+			}
 
-            // Increment offset;
-            Offset++;
+			// Increment offset;
+			Offset++;
 
-            return Offset == 8;
-        }
+			return Offset == 8;
+		}
 
-        public byte Clear() {
-            // Copy value
-            var value = Buffer;
+		public Byte Clear() {
+			// Copy value
+			var value = Buffer;
 
-            // Reset value
-            Buffer = 0;
+			// Reset value
+			Buffer = 0;
 
-            // Reset offset
-            Offset = 0;
+			// Reset offset
+			Offset = 0;
 
-            // Return value
-            return value;
-        }
-    }
+			// Return value
+			return value;
+		}
+	}
 }

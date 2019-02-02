@@ -3,71 +3,75 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace InvertedTomato.IO.Buffers {
-    public class BufferEnumerator<T> : IEnumerator<T> {
-        private int Position = -1;
-        private readonly ReadOnlyBuffer<T> Buffer;
+	public class BufferEnumerator<T> : IEnumerator<T> {
+		private readonly ReadOnlyBuffer<T> Buffer;
+		private Int32 Position = -1;
 
-        public T Current {
-            get {
+		public BufferEnumerator(ReadOnlyBuffer<T> buffer) {
 #if DEBUG
-                if (Position == -1) {
-                    throw new InvalidOperationException("Not yet moved.");
-                }
-                if (Position > Buffer.Used) {
-                    throw new InvalidOperationException("Moved beyond end of set.");
-                }
-#endif
-                return Buffer.Peek(Position);
-            }
-        }
-
-        object IEnumerator.Current {
-            get {
-#if DEBUG
-                if (Position == -1) {
-                    throw new InvalidOperationException("Not yet moved.");
-                }
-                if (Position > Buffer.Used) {
-                    throw new InvalidOperationException("Moved beyond end of set.");
-                }
-#endif
-                return Buffer.Peek(Position);
-            }
-        }
-        public bool IsDisposed { get; private set; }
-
-        public BufferEnumerator(ReadOnlyBuffer<T> buffer) {
-#if DEBUG
-            if (null == buffer) {
-                throw new ArgumentNullException("buffer");
-            }
+			if (null == buffer) {
+				throw new ArgumentNullException("buffer");
+			}
 #endif
 
-            // Store
-            Buffer = buffer;
-        }
+			// Store
+			Buffer = buffer;
+		}
 
-        public bool MoveNext() {
-            return ++Position < Buffer.Used;
-        }
+		public Boolean IsDisposed { get; private set; }
 
-        public void Reset() {
-            Position = -1;
-        }
+		public T Current {
+			get {
+#if DEBUG
+				if (Position == -1) {
+					throw new InvalidOperationException("Not yet moved.");
+				}
 
-        protected virtual void Dispose(bool disposing) {
-            if (IsDisposed) {
-                return;
-            }
-            IsDisposed = true;
+				if (Position > Buffer.Used) {
+					throw new InvalidOperationException("Moved beyond end of set.");
+				}
+#endif
+				return Buffer.Peek(Position);
+			}
+		}
 
-            if (disposing) {
-                // Dispose managed state (managed objects).
-            }
-        }
+		Object IEnumerator.Current {
+			get {
+#if DEBUG
+				if (Position == -1) {
+					throw new InvalidOperationException("Not yet moved.");
+				}
 
-        public void Dispose() {
-            Dispose(true);
-        }
-    }
+				if (Position > Buffer.Used) {
+					throw new InvalidOperationException("Moved beyond end of set.");
+				}
+#endif
+				return Buffer.Peek(Position);
+			}
+		}
+
+		public Boolean MoveNext() {
+			return ++Position < Buffer.Used;
+		}
+
+		public void Reset() {
+			Position = -1;
+		}
+
+		public void Dispose() {
+			Dispose(true);
+		}
+
+		protected virtual void Dispose(Boolean disposing) {
+			if (IsDisposed) {
+				return;
+			}
+
+			IsDisposed = true;
+
+			if (disposing) {
+				// Dispose managed state (managed objects).
+			}
+		}
+	}
 }

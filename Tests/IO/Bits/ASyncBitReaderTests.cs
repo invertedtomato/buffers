@@ -1,54 +1,55 @@
-﻿using InvertedTomato.IO.Bits;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
 using System.Collections.Generic;
 
 namespace InvertedTomato.IO.Bits.Tests {
-    [TestClass]
-    public class ASyncBitReaderTests {
-        [TestMethod]
-        public void Read_1Byte_1Bit() {
-            var position = 0;
-            var results = new List<ulong>() { 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+	[TestClass]
+	public class ASyncBitReaderTests {
+		[TestMethod]
+		public void Read_1Byte_1Bit() {
+			var position = 0;
+			var results = new List<UInt64> {0, 0, 0, 0, 0, 0, 0, 0, 1};
 
-            var reader = new ASyncBitReader((value, count) => {
-                var expected = results[position++];
+			var reader = new ASyncBitReader((value, count) => {
+				var expected = results[position++];
 
-                Assert.AreEqual(expected, value, "Position #" + (position - 1));
+				Assert.AreEqual(expected, value, "Position #" + (position - 1));
 
-                return 1;
-            });
+				return 1;
+			});
 
-            reader.Insert(new byte[] { 1 });
-        }
-        [TestMethod]
-        public void Read_2Byte_1Bit() {
-            var position = 0;
-            var results = new List<ulong>() { 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0 };
+			reader.Insert(new Byte[] {1});
+		}
 
-            var reader = new ASyncBitReader((value, count) => {
-                var expected = results[position++];
+		[TestMethod]
+		public void Read_2Byte_1Bit() {
+			var position = 0;
+			var results = new List<UInt64> {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0};
 
-                Assert.AreEqual(expected, value, "Position #" + (position - 1));
+			var reader = new ASyncBitReader((value, count) => {
+				var expected = results[position++];
 
-                return 1;
-            });
+				Assert.AreEqual(expected, value, "Position #" + (position - 1));
 
-            reader.Insert(new byte[] { 1, 2 });
-        }
-        [TestMethod]
-        public void Read_2Byte_3Bit() {
-            var position = 0;
-            var results = new List<ulong>() { 0, 0, 0, 2, 0, 1 };
+				return 1;
+			});
 
-            var reader = new ASyncBitReader((value, count) => {
-                var expected = results[position++];
+			reader.Insert(new Byte[] {1, 2});
+		}
 
-                Assert.AreEqual(expected, value, "Position #" + (position - 1));
+		[TestMethod]
+		public void Read_2Byte_3Bit() {
+			var position = 0;
+			var results = new List<UInt64> {0, 0, 0, 2, 0, 1};
 
-                return 3;
-            });
+			var reader = new ASyncBitReader((value, count) => {
+				var expected = results[position++];
 
-            reader.Insert(new byte[] { 1, 2 });
-        }
-    }
+				Assert.AreEqual(expected, value, "Position #" + (position - 1));
+
+				return 3;
+			});
+
+			reader.Insert(new Byte[] {1, 2});
+		}
+	}
 }
