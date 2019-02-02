@@ -17,6 +17,8 @@
     <FileVersion>1.0.15.0</FileVersion>
     <Authors>Inverted Tomato</Authors>
     <Company>Inverted Tomato</Company>
+    <PackageVersion>1.0.16</PackageVersion>
+    <Title>InvertedTomato.Buffers</Title>
   </PropertyGroup>
 
   <ItemGroup>
